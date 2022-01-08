@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+  if students
+    each student in students
+      div(class="card mt-3")
+        h5(class="card-header") #{student.nom} #{student.prenom} demande faite le #{student.date}
+        div(class="card-body")
+          p(class="card-text") E-Mail : #{student.email}
+          p(class="card-text") Téléphone : #{student.tel}
+          p(class="card-text") Système scolaire : #{student.scolarite}
+          p(class="card-text") Pays de scolarisation : #{student.pays}
+          p(class="card-text") Ville : #{student.ville}
+          p(class="card-text") Ecole : #{student.ecole}
+          p(class="card-text") Classe : #{student.classe}
+          p(class="card-text") Souhait : #{student.option}

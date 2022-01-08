@@ -1,0 +1,95 @@
+extends ../layout
+
+block content
+
+  div(class="mx-auto")
+  
+    div(class="main-bg btn-group mx-auto mt-3" role="group" aria-label="Basic example")
+      button(type="button" class="btn btn-info" onClick="displayHight()") Prioritaire
+      button(type="button" class="btn btn-secondary" onClick="displayLow()") Secondaire
+      button(type="button" class="btn btn-secondary" onClick="displayProspected()") Prospecté
+
+
+    div(class="mx-auto" id="hight_container")
+      if hightStudents
+        each student in hightStudents
+          div(class="card mt-3")
+            h5(class="card-header") #{student.nom} #{student.prenom} demande faite le #{student.date}
+            div(class="card-body")
+              span(class="hidden") #{student._id}
+              p(class="card-text") E-Mail : #{student.email}
+              p(class="card-text") Téléphone : #{student.tel}
+              p(class="card-text") Système scolaire : #{student.scolarite}
+              p(class="card-text") Pays de scolarisation : #{student.pays}
+              p(class="card-text") Ville : #{student.ville}
+              p(class="card-text") Ecole : #{student.ecole}
+              p(class="card-text") Classe : #{student.classe}
+              p(class="card-text") Souhait : #{student.option}
+              a(href="/prospection/prospecte/"+student._id class="btn btn-info mt-3") Prospecter
+
+    div(class="hidden mx-auto" id="low_container")
+      if lowStudents
+        each student in lowStudents
+          div(class="card mt-3")
+            h5(class="card-header") #{student.nom} #{student.prenom} demande faite le #{student.date}
+            div(class="card-body")
+              span(class="hidden") #{student._id}
+              p(class="card-text") E-Mail : #{student.email}
+              p(class="card-text") Téléphone : #{student.tel}
+              p(class="card-text") Système scolaire : #{student.scolarite}
+              p(class="card-text") Pays de scolarisation : #{student.pays}
+              p(class="card-text") Ville : #{student.ville}
+              p(class="card-text") Ecole : #{student.ecole}
+              p(class="card-text") Classe : #{student.classe}
+              p(class="card-text") Souhait : #{student.option}
+              a(href="/prospection/prospecte/"+student._id class="btn btn-info  mt-3" ) Prospecter
+
+    div(class="hidden mx-auto" id="prospected_container")
+      if prospectedStudents
+        each student in prospectedStudents
+          div(class="card mt-3")
+            h5(class="card-header") #{student.nom} #{student.prenom} demande faite le #{student.date}
+            div(class="card-body")
+              span(class="hidden") #{student._id}
+              p(class="card-text") E-Mail : #{student.email}
+              p(class="card-text") Téléphone : #{student.tel}
+              p(class="card-text") Système scolaire : #{student.scolarite}
+              p(class="card-text") Pays de scolarisation : #{student.pays}
+              p(class="card-text") Ville : #{student.ville}
+              p(class="card-text") Ecole : #{student.ecole}
+              p(class="card-text") Classe : #{student.classe}
+              p(class="card-text") Souhait : #{student.option}
+              a(href="/prospection/deprospecte/"+student._id class="btn btn-info  mt-3" ) DeProspecter
+
+    script.
+
+      function displayHight() {
+        a = document.getElementById("hight_container");
+        b = document.getElementById("low_container");
+        c = document.getElementById("prospected_container");
+
+        a.style.display = "block";
+        b.style.display = "none";
+        c.style.display = "none";
+      }
+
+      function displayLow() {
+        a = document.getElementById("hight_container");
+        b = document.getElementById("low_container");
+        c = document.getElementById("prospected_container");
+
+        a.style.display = "none";
+        b.style.display = "block";
+        c.style.display = "none";
+      }
+
+      function displayProspected() {
+        a = document.getElementById("hight_container");
+        b = document.getElementById("low_container");
+        c = document.getElementById("prospected_container");
+
+        a.style.display = "none";
+        b.style.display = "none";
+        c.style.display = "block";
+      }
+  

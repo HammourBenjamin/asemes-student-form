@@ -1,0 +1,84 @@
+.navbar {
+  background: #fef2d0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.nav-link {
+  color: black;
+}
+
+.nav-link:hover {
+  color: #01938b;
+}
+
+.card-header {
+  background: #fef2d0;
+}
+
+.tab {
+  display: none;
+}
+
+.hidden {
+  display: none;
+}
+
+p {
+  margin: 0;
+}
+
+.active {
+  display: inline;
+}
+
+.main-bg {
+  background: #fef2d0;
+}
+
+body {
+  background-color: #01938b;
+}
+
+button {
+  background-color: #01938b;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 17px;
+  font-family: Raleway;
+  cursor: pointer;
+  margin: 0.5em;
+  border-radius: 10px;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+.iti__flag {
+  background-image: url("../images/flags.png") !important;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .iti__flag {
+    background-image: url("../images/flags@2x.png") !important;
+  }
+}
+
+#prevBtn {
+  background-color: #bbbbbb;
+}
+
+#errorsContent {
+  background-color: #01938b;
+  border: none;
+}
+
+input[type="text"] {
+  padding-left: 0.75rem;
+}
+
+input:invalid {
+  border: 2px solid red;
+  background-color: #FCDBD3;
+}

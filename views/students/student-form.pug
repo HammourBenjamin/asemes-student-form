@@ -1,0 +1,213 @@
+extends ../layout
+
+block content
+  div(class="d-flex flex-row content justify-content-center mx-auto")
+      div(id="errorsContent", class="card w-50 mt-4")
+        if errors
+          each error in errors 
+            div(class="alert alert-danger" role="alert") #{error}
+  div(class="d-flex flex-row content justify-content-center mx-auto")
+      div(id="errorsContent", class="card w-50 mt-4")
+        if success
+          div(class="alert alert-success" role="alert") Votre demande a été prise en compte.
+  div(class="d-flex flex-row content justify-content-center mx-auto")
+    form(class="card w-50 mt-5 mb-5" id="regForm" method="post" action="/students/signup")
+      div(class="card-header tab") Coordonnées :
+        div(class="card-body")
+          div(class="form-group")
+            label Nom
+            input(class="form-control" type="text" name="nom" value = body === undefined ? `` : `${body.nom}`)
+            div(class="invalid-feedback")
+          div(class="form-group")
+            label Prenom
+            input(class="form-control" type="text" name="prenom" value = body === undefined ? `` : `${body.prenom}`)
+          div(class="form-group")
+            label Email
+            input(class="form-control" type="email" name="email" value = body === undefined ? `` : `${body.email}`)
+          div(class="form-group")
+            label(style="display:block") Téléphone
+            input(class="form-control" oninput="this.className = ''" type="tel" name="tel" id="phone" value = body === undefined ? `` : `${body.tel}`)
+      div(class="card-header tab") Scolarité :
+        div(class="card-body")
+          div(class="form-group")
+            label Système scolaire
+            SELECT(name="scolarite" size="1" oninput="countrySection()" id="scolarite" class="form-control")
+              OPTION Français
+              OPTION(selected) Luxembourgeois
+              OPTION Belge
+              OPTION Allemand
+              OPTION Ecole Européenne
+              OPTION Autre
+          div(class="form-group")
+            label(id="label_pays") Pays
+            SELECT(name="pays" size="1" id="pays" class="form-control")
+              OPTION France
+              OPTION(selected) Luxembourg
+              OPTION Belgique
+              OPTION Allemagne
+              input(placeholder="Pays..." oninput="this.className = ''" type="text" name="pays_autre" id="pays_autre" class="form-control hidden" value = body === undefined ? `` : `${body.pays_autre}`)
+          div(class="form-group")
+            input(placeholder="Ville..." oninput="this.className = ''" type="text" name="ville" id="ville" class="form-control" value = body === undefined ? `` : `${body.ville}`)
+          div(class="form-group")
+            input(placeholder="Ecole..." oninput="this.className = ''" type="text" name="ecole" id="ecole" class="form-control" value = body === undefined ? `` : `${body.ecole}`)
+          div(class="form-group")
+            div(id="classe")
+              SELECT(name="classe" size="1" class="form-control")
+                      OPTION Quatrième
+                      OPTION Troixième
+                      OPTION Deuxième
+            input(placeholder="Classe..." oninput="this.className = ''" type="text" name="classe_autre" id="classe_autre" class="form-control hidden" value = body === undefined ? `` : `${body.classe_autre}`)
+      div(class="card-header tab") Souhaits :
+        div(class="card-body")
+          div(class="form-group")
+            div(class="form-check")
+              input(class="form-check-input" type="radio" name="option" id="MB" value="Médecine Luxembourg" checked)
+              label(class="form-check-label" for="ML") Médecine Luxembourg
+            div(class="form-check")
+              input(class="form-check-input" type="radio" name="option" id="MF" value="Médecine France")
+              label(class="form-check-label" for="MF") Médecine France
+            div(class="form-check")
+              input(class="form-check-input" type="radio" name="option" id="MB" value="Médecine Belgique")
+              label(class="form-check-label" for="MB") Médecine Belgique
+            div(class="form-check")
+              input(class="form-check-input" type="radio" name="option" id="MAl" value="Médecine Allemagne")
+              label(class="form-check-label" for="MAl") Médecine Allemagne
+            div(class="form-check")
+              input(class="form-check-input" type="radio" name="option" id="MAu" value="Médecine Autriche")
+              label(class="form-check-label" for="MAu") Médecine Autriche
+            div
+              label Autre
+              input(class="form-control" type="text" name="SAutre")
+      div(class="main-bg" style="overflow:auto")
+        div(class="main-bg" style="float:right")
+          button(type="button" id="prevBtn" onclick="nextPrev(-1)") Précédent
+          button(type="button" id="nextBtn" onclick="nextPrev(1)") Suivant
+          button(type="submit" id="submit") Envoyer
+
+
+  script.
+    var currentTab = 0; // Current tab is set to be the first tab (0)
+    showTab(currentTab); // Display the current tab
+
+    function showTab(n) {
+        // This function will display the specified tab of the form...
+        var x = document.getElementsByClassName("tab");
+        x[n].style.display = "block";
+        //... and fix the Previous/Next buttons:
+        if (n == 0) {
+            document.getElementById("prevBtn").style.display = "none";
+            document.getElementById("submit").style.display = "none";
+            document.getElementById("nextBtn").style.display = "inline";
+        } else {
+            document.getElementById("prevBtn").style.display = "inline";
+        }
+
+        if (n == (x.length - 1)) {
+            document.getElementById("nextBtn").style.display = "none";
+            document.getElementById("submit").style.display = "inline";
+        }
+    }
+
+    function nextPrev(n) {
+        // This function will figure out which tab to display
+        var x = document.getElementsByClassName("tab");
+        // Exit the function if any field in the current tab is invalid:
+        //if (n == 1 && !validateForm()) return false;
+        // Hide the current tab:
+        x[currentTab].style.display = "none";
+        // Increase or decrease the current tab by 1:
+        currentTab = currentTab + n;
+      
+        // Otherwise, display the correct tab:
+        showTab(currentTab);
+    }
+
+    function countrySection() {
+        x = document.getElementById("scolarite");
+        w = document.getElementById("classe");
+        a = document.getElementById("pays");
+        b = document.getElementById("ville");
+        c = document.getElementById("ecole");
+        d = document.getElementById("pays_autre");
+        e = document.getElementById("classe_autre");
+
+        if (x.value === "Autre") {
+            document.getElementById("label_pays").style.display = "none";
+            document.getElementById("pays").style.display = "none";
+            document.getElementById("pays_autre").style.display = "inline";
+            document.getElementById("classe").style.display = "none";
+            document.getElementById("classe_autre").style.display = "inline";
+        } else {
+            document.getElementById("label_pays").style.display = "inline";
+            document.getElementById("pays").style.display = "inline";
+            document.getElementById("pays_autre").style.display = "none";
+            document.getElementById("classe").style.display = "inline";
+            document.getElementById("classe_autre").style.display = "none";
+            d.value ='';
+            e.value ='';
+
+        }1
+
+        if (x.value === "Français") {
+          w.innerHTML = frenchLevel();
+        } else if (x.value === "Luxembourgeois") {
+          w.innerHTML = luxembourgLevel();
+        } else if (x.value === "Belge") {
+          w.innerHTML = belgiumLevel();
+        } else if (x.value === "Allemand") {
+          w.innerHTML = germanLevel();
+        } else if (x.value === "Ecole Européenne"){
+           w.innerHTML = europeanSchoolLevel();
+           a.value = 'Luxembourg';
+           c.value = 'Ecole Européenne';
+        } 
+    }
+
+    function frenchLevel() {
+        return `<SELECT name="classe" size="1" class="form-control">
+                    <OPTION>Seconde
+                    <OPTION>Première
+                    <OPTION>Terminal
+                </SELECT>`;
+    }
+
+    function luxembourgLevel() {
+        return `<SELECT name="classe" size="1" class="form-control">
+                    <OPTION>Troixième
+                    <OPTION>Deuxième
+                    <OPTION>Première
+                </SELECT>`;
+    }
+
+    function belgiumLevel() {
+        return `<SELECT name="classe" size="1" class="form-control">
+                    <OPTION>Quatrième
+                    <OPTION>Cinquième
+                    <OPTION>Sixième
+                </SELECT>`;
+    }
+
+    function germanLevel() {
+        return `<SELECT name="classe" size="1" class="form-control">
+                    <OPTION>Dixième
+                    <OPTION>Onzième
+                    <OPTION>Douzième
+                </SELECT>`;
+    }
+
+     function europeanSchoolLevel() {
+        return `<SELECT name="classe" size="1" class="form-control">
+                    <OPTION>Quatrième
+                    <OPTION>Cinquième
+                    <OPTION>Sixième
+                    <OPTION>Septième
+                </SELECT>`;
+    }
+  
+  script.
+     var input = document.querySelector("#phone");
+    window.intlTelInput(input, {
+        preferredCountries: ["lu", "fr", "be", "de"],
+        hiddenInput: "full_phone",
+        utilsScript: "../../js/utils.js?1613236686837"
+    });
