@@ -1,10 +1,20 @@
-const { createStudent, getStudents } = require('../queries/student.queries');
+const { createStudent, getStudents, deleteStudent } = require('../queries/student.queries');
 
 exports.studentCreate = async (req, res, next) => {
   try {
     const body = req.body;
     await createStudent({ ...body});
     res.redirect('/students/signup/form');
+  } catch(e) {
+    console.log(e);
+  }
+}
+
+exports.deleteStudent = async (req, res, next) => {
+  try {
+    const body = req.body;
+    await deleteStudent({ ...body});
+    res.redirect('/students');
   } catch(e) {
     console.log(e);
   }
@@ -29,7 +39,7 @@ function getFormattedDate(date) {
   month = month.length > 1 ? month : '0' + month;
 
   var day = date.getDate().toString();
-  day = day.length > 1 ? day : '0' + day;
+  day = day.length > 1 ? day : '0' + day; 
   
   return month + '/' + day + '/' + year;
 }

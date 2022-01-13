@@ -82,3 +82,12 @@ input:invalid {
   border: 2px solid red;
   background-color: #FCDBD3;
 }
+
+.wish_container {
+  border-bottom: solid 1px #01938b;
+  padding: 1rem 0;
+}
+
+.whish_title {
+  padding-bottom: 1rem;
+}

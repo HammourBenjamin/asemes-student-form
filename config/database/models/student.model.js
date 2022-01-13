@@ -11,7 +11,7 @@ const studentSchema = schema({
         ville: String,
         ecole: String,
         classe: String,
-        option: String,
+        options: {type: Object},
         prospecter: {
           type: Boolean,
           default: false

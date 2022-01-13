@@ -11,19 +11,19 @@ block content
         if success
           div(class="alert alert-success" role="alert") Votre demande a été prise en compte.
   div(class="d-flex flex-row content justify-content-center mx-auto")
-    form(class="card w-50 mt-5 mb-5" id="regForm" method="post" action="/students/signup")
+    form(class="card w-50 mt-5 mb-5" id="regForm")
       div(class="card-header tab") Coordonnées :
         div(class="card-body")
           div(class="form-group")
             label Nom
-            input(class="form-control" type="text" name="nom" value = body === undefined ? `` : `${body.nom}`)
+            input(class="form-control name_input" type="text" name="nom" value = body === undefined ? `` : `${body.nom}`)
             div(class="invalid-feedback")
           div(class="form-group")
             label Prenom
-            input(class="form-control" type="text" name="prenom" value = body === undefined ? `` : `${body.prenom}`)
+            input(class="form-control surname_input" type="text" name="prenom" value = body === undefined ? `` : `${body.prenom}`)
           div(class="form-group")
             label Email
-            input(class="form-control" type="email" name="email" value = body === undefined ? `` : `${body.email}`)
+            input(class="form-control mail_input" type="email" name="email" value = body === undefined ? `` : `${body.email}`)
           div(class="form-group")
             label(style="display:block") Téléphone
             input(class="form-control" oninput="this.className = ''" type="tel" name="tel" id="phone" value = body === undefined ? `` : `${body.tel}`)
@@ -31,7 +31,7 @@ block content
         div(class="card-body")
           div(class="form-group")
             label Système scolaire
-            SELECT(name="scolarite" size="1" oninput="countrySection()" id="scolarite" class="form-control")
+            SELECT(name="scolarite" size="1" oninput="countrySection()" id="scolarite" class="form-control system_scolaire_input")
               OPTION Français
               OPTION(selected) Luxembourgeois
               OPTION Belge
@@ -45,49 +45,140 @@ block content
               OPTION(selected) Luxembourg
               OPTION Belgique
               OPTION Allemagne
-              input(placeholder="Pays..." oninput="this.className = ''" type="text" name="pays_autre" id="pays_autre" class="form-control hidden" value = body === undefined ? `` : `${body.pays_autre}`)
+              input(placeholder="Pays..." type="text" name="pays_autre" id="pays_autre" class="form-control hidden" value = body === undefined ? `` : `${body.pays_autre}`)
           div(class="form-group")
-            input(placeholder="Ville..." oninput="this.className = ''" type="text" name="ville" id="ville" class="form-control" value = body === undefined ? `` : `${body.ville}`)
+            input(placeholder="Ville..." type="text" name="ville" id="ville" class="form-control" value = body === undefined ? `` : `${body.ville}`)
           div(class="form-group")
-            input(placeholder="Ecole..." oninput="this.className = ''" type="text" name="ecole" id="ecole" class="form-control" value = body === undefined ? `` : `${body.ecole}`)
+            input(placeholder="Ecole..." type="text" name="ecole" id="ecole" class="form-control" value = body === undefined ? `` : `${body.ecole}`)
           div(class="form-group")
-            div(id="classe")
-              SELECT(name="classe" size="1" class="form-control")
+            div(id="classe_div")
+              SELECT(name="classe"  id="classe" size="1" class="form-control")
                       OPTION Quatrième
                       OPTION Troixième
                       OPTION Deuxième
-            input(placeholder="Classe..." oninput="this.className = ''" type="text" name="classe_autre" id="classe_autre" class="form-control hidden" value = body === undefined ? `` : `${body.classe_autre}`)
+            input(placeholder="Classe..." type="text" name="classe_autre" id="classe_autre" class="form-control hidden" value = body === undefined ? `` : `${body.classe_autre}`)
       div(class="card-header tab") Souhaits :
-        div(class="card-body")
-          div(class="form-group")
-            div(class="form-check")
-              input(class="form-check-input" type="radio" name="option" id="MB" value="Médecine Luxembourg" checked)
-              label(class="form-check-label" for="ML") Médecine Luxembourg
-            div(class="form-check")
-              input(class="form-check-input" type="radio" name="option" id="MF" value="Médecine France")
-              label(class="form-check-label" for="MF") Médecine France
-            div(class="form-check")
-              input(class="form-check-input" type="radio" name="option" id="MB" value="Médecine Belgique")
-              label(class="form-check-label" for="MB") Médecine Belgique
-            div(class="form-check")
-              input(class="form-check-input" type="radio" name="option" id="MAl" value="Médecine Allemagne")
-              label(class="form-check-label" for="MAl") Médecine Allemagne
-            div(class="form-check")
-              input(class="form-check-input" type="radio" name="option" id="MAu" value="Médecine Autriche")
-              label(class="form-check-label" for="MAu") Médecine Autriche
-            div
-              label Autre
-              input(class="form-control" type="text" name="SAutre")
+        div(class="card-body" id="wishes_container")
+        div(class="main-bg" style="overflow:auto")
+          div(class="main-bg" style="float:right")
+            button(type="button" id="addVoeux") +
       div(class="main-bg" style="overflow:auto")
         div(class="main-bg" style="float:right")
           button(type="button" id="prevBtn" onclick="nextPrev(-1)") Précédent
           button(type="button" id="nextBtn" onclick="nextPrev(1)") Suivant
-          button(type="submit" id="submit") Envoyer
+          button(type="button" id="submit" onclick="sendData()") Envoyer
 
 
   script.
-    var currentTab = 0; // Current tab is set to be the first tab (0)
+    var currentTab = 0;
+    var wish_index = 1;
+
     showTab(currentTab); // Display the current tab
+    addWhish(wish_index);
+
+    const wishButtonElement = document.getElementById("addVoeux");
+
+    wishButtonElement.addEventListener("click", event => {
+      addWhish();
+    })
+
+    function addWhish() {
+      var wishes_container = document.getElementById("wishes_container");
+      var wish_div = document.createElement("div");
+      wish_div.classList.add("wish_container");
+      var title = document.createElement("h6");
+      title.classList.add("whish_title");
+      title.innerText = `Voeux ${ wish_index } `
+      wish_div.append(title);
+      var wish_type = document.createElement("div");
+      wish_type.classList.add("form-group");
+      var select_type = document.createElement("SELECT");
+      select_type.classList.add("form-control","type_select");
+      var blank_option = document.createElement("option");
+      blank_option.setAttribute("disabled", false);
+      blank_option.setAttribute("selected", true);
+      blank_option.innerText = "Veuillez choisir une orientation";
+      var medecine_option = document.createElement("option");
+      medecine_option.text = "Médecine";
+      var dentaire_option = document.createElement("option");
+      dentaire_option.text = "Dentaire";
+      var pharma_option = document.createElement("option");
+      pharma_option.text = "Pharma";  
+      select_type.add(blank_option, select_type[0]);
+      select_type.add(medecine_option, select_type[1]);
+      select_type.add(dentaire_option, select_type[2]);
+      select_type.add(pharma_option, select_type[3]);
+      wish_type.appendChild(select_type);
+
+      var wish_country = document.createElement("div");
+      wish_country.classList.add("form-group");
+      var select_country = document.createElement("SELECT");
+      select_country.classList.add("form-control","country_select");
+      var blank_option = document.createElement("option");
+      blank_option.setAttribute("disabled", false);
+      blank_option.setAttribute("selected", true);
+      blank_option.innerText = "Veuillez choisir un pays";
+      var france_option = document.createElement("option");
+      france_option.text = "France";
+      var luxembourg_option = document.createElement("option");
+      luxembourg_option.text = "Luxembourg";
+      var allemangne_option = document.createElement("option");
+      allemangne_option.text = "Allemange";
+      var belgique_option = document.createElement("option");
+      belgique_option.text = "Belgique";
+      var autriche_option = document.createElement("option");
+      autriche_option.text = "Autriche";
+      var italie_option = document.createElement("option");
+      italie_option.text = "Italie";
+      var canada_option = document.createElement("option");
+      canada_option.text = "Canada";
+      select_country.add(blank_option, select_country[0]);
+      select_country.add(france_option, select_country[1]);
+      select_country.add(luxembourg_option, select_country[2]);
+      select_country.add(allemangne_option, select_country[3]);
+      select_country.add(belgique_option, select_country[4]);
+      select_country.add(autriche_option, select_country[5]);
+      select_country.add(italie_option, select_country[6]);
+      select_country.add(canada_option, select_country[7]);
+      wish_country.appendChild(select_country);
+
+      var wish_other = document.createElement("div");
+      wish_other.classList.add("form-group");
+      var wish_other_label = document.createElement("label");
+      var wish_other_label_text = document.createTextNode("Autre");
+      wish_other_label.appendChild(wish_other_label_text);
+      var wish_other_input = document.createElement("input");
+      wish_other_input.classList.add("form-control","other_input");
+      wish_other_input.setAttribute("type", "text");
+      wish_other_input.setAttribute("placeholder", "Ex : Médecine Hollande");
+      wish_other.appendChild(wish_other_label);
+      wish_other.appendChild(wish_other_input);
+
+      var remove_button = document.createElement("button");
+      remove_button.setAttribute("type","button");
+      remove_button.classList.add("btn","btn-outline-danger");
+      remove_button.innerText = "Supprimer";
+      remove_button.addEventListener("click", event => {
+        if(document.getElementsByClassName('whish_title').length > 1) {
+          event.target.closest(".wish_container").remove();
+          wish_index--;
+          const whish_title_elements = document.getElementsByClassName('whish_title');
+          let index = 1;
+          for (let item of whish_title_elements) {
+            item.innerText = `Voeux ${ index }`
+            index++;
+          }
+        }
+      })
+
+      wish_div.appendChild(wish_type);
+      wish_div.appendChild(wish_country);
+      wish_div.appendChild(wish_other);
+      wish_div.appendChild(remove_button);
+
+      wishes_container.appendChild(wish_div);
+      wish_index++;
+    }
 
     function showTab(n) {
         // This function will display the specified tab of the form...
@@ -100,9 +191,12 @@ block content
             document.getElementById("nextBtn").style.display = "inline";
         } else {
             document.getElementById("prevBtn").style.display = "inline";
+            document.getElementById("nextBtn").style.display = "inline";
+            document.getElementById("submit").style.display = "none";
         }
 
         if (n == (x.length - 1)) {
+            document.getElementById("prevBtn").style.display = "inline";
             document.getElementById("nextBtn").style.display = "none";
             document.getElementById("submit").style.display = "inline";
         }
@@ -124,7 +218,7 @@ block content
 
     function countrySection() {
         x = document.getElementById("scolarite");
-        w = document.getElementById("classe");
+        w = document.getElementById("classe_div");
         a = document.getElementById("pays");
         b = document.getElementById("ville");
         c = document.getElementById("ecole");
@@ -135,13 +229,13 @@ block content
             document.getElementById("label_pays").style.display = "none";
             document.getElementById("pays").style.display = "none";
             document.getElementById("pays_autre").style.display = "inline";
-            document.getElementById("classe").style.display = "none";
+            document.getElementById("classe_div").style.display = "none";
             document.getElementById("classe_autre").style.display = "inline";
         } else {
             document.getElementById("label_pays").style.display = "inline";
             document.getElementById("pays").style.display = "inline";
             document.getElementById("pays_autre").style.display = "none";
-            document.getElementById("classe").style.display = "inline";
+            document.getElementById("classe_div").style.display = "inline";
             document.getElementById("classe_autre").style.display = "none";
             d.value ='';
             e.value ='';
@@ -164,7 +258,7 @@ block content
     }
 
     function frenchLevel() {
-        return `<SELECT name="classe" size="1" class="form-control">
+        return `<SELECT name="classe" id="classe" size="1" class="form-control">
                     <OPTION>Seconde
                     <OPTION>Première
                     <OPTION>Terminal
@@ -172,7 +266,7 @@ block content
     }
 
     function luxembourgLevel() {
-        return `<SELECT name="classe" size="1" class="form-control">
+        return `<SELECT name="classe" id="classe" size="1" class="form-control">
                     <OPTION>Troixième
                     <OPTION>Deuxième
                     <OPTION>Première
@@ -180,7 +274,7 @@ block content
     }
 
     function belgiumLevel() {
-        return `<SELECT name="classe" size="1" class="form-control">
+        return `<SELECT name="classe" id="classe" size="1" class="form-control">
                     <OPTION>Quatrième
                     <OPTION>Cinquième
                     <OPTION>Sixième
@@ -188,7 +282,7 @@ block content
     }
 
     function germanLevel() {
-        return `<SELECT name="classe" size="1" class="form-control">
+        return `<SELECT name="classe" id="classe" size="1" class="form-control">
                     <OPTION>Dixième
                     <OPTION>Onzième
                     <OPTION>Douzième
@@ -196,7 +290,7 @@ block content
     }
 
      function europeanSchoolLevel() {
-        return `<SELECT name="classe" size="1" class="form-control">
+        return `<SELECT name="classe" id="classe" size="1" class="form-control">
                     <OPTION>Quatrième
                     <OPTION>Cinquième
                     <OPTION>Sixième
@@ -204,9 +298,83 @@ block content
                 </SELECT>`;
     }
   
+    function sendData() {
+      var XHR = new XMLHttpRequest();
+     
+      const whishes = [];
+      const full_phone = iti.getNumber();
+      const name = document.getElementsByClassName("name_input")[0].value;
+      const surname = document.getElementsByClassName("surname_input")[0].value;
+      const email = document.getElementsByClassName("mail_input")[0].value;
+      const system_scolaire = document.getElementsByClassName("system_scolaire_input")[0].value;
+      let pays_select = document.querySelector("#pays").value;
+      let pays_autre = document.querySelector("#pays_autre").value;
+      const ville = document.querySelector("#ville").value;
+      const ecole  = document.querySelector("#ecole").value;
+      let classe_select  = document.querySelector("#classe").value;
+      let classe_autre = document.querySelector("#classe_autre").value;
+
+      const country_select_element = document.getElementsByClassName("country_select");
+      const type_select_element = document.getElementsByClassName("type_select");
+      const other_input_element = document.getElementsByClassName("other_input");
+
+      let pays;
+      let classe;
+
+      if (system_scolaire === 'Autre') {
+        pays_select = '';
+        classe_select = '';
+        pays = pays_autre;
+        classe = classe_autre;
+      } else {
+        pays_autre = '';
+        classe_autre = '';
+        pays = pays_select;
+        classe = classe_select;
+      }
+
+      for (var i = 0; i < country_select_element.length; i++) {
+        whishes.push({
+          orientation : type_select_element[i].value === "Veuillez choisir une orientation" ? '' : type_select_element[i].value ,
+          country : country_select_element[i].value === "Veuillez choisir un pays" ? '' : country_select_element[i].value,
+          other : other_input_element[i].value
+        });
+      }
+    
+      // Définissez ce qui se passe en cas de succès de soumission de données
+      XHR.addEventListener('load', function(event) {
+        location.href = "/students/signup/form";
+      });
+
+      // Définissez ce qui arrive en cas d'erreur
+      XHR.addEventListener('error', function(event) {
+        alert('Oups! Quelque chose s\'est mal passé.');
+      });
+
+      // Configurez la requête
+      XHR.open('POST', "/students/signup");
+
+      // Ajoutez l'en-tête HTTP requise pour requêtes POST de données de formulaire
+      XHR.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+
+      // Finalement, envoyez les données.
+      XHR.send(JSON.stringify({
+        nom : name,
+        prenom : surname,
+        email : email,
+        full_phone : full_phone,
+        scolarite : system_scolaire,
+        pays : pays,
+        ville : ville,
+        ecole : ecole,
+        classe : classe,
+        options : whishes,
+        }));
+    }
+  
   script.
-     var input = document.querySelector("#phone");
-    window.intlTelInput(input, {
+    var input = document.querySelector("#phone");
+    var iti = window.intlTelInput(input, {
         preferredCountries: ["lu", "fr", "be", "de"],
         hiddenInput: "full_phone",
         utilsScript: "../../js/utils.js?1613236686837"

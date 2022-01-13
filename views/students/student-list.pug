@@ -6,11 +6,49 @@ block content
       div(class="card mt-3")
         h5(class="card-header") #{student.nom} #{student.prenom} demande faite le #{student.date}
         div(class="card-body")
+          p(class="hidden" id="student_id") #{student._id}
           p(class="card-text") E-Mail : #{student.email}
-          p(class="card-text") Téléphone : #{student.tel}
+          p(class="card-text mb-3") Téléphone : #{student.tel}
           p(class="card-text") Système scolaire : #{student.scolarite}
           p(class="card-text") Pays de scolarisation : #{student.pays}
           p(class="card-text") Ville : #{student.ville}
           p(class="card-text") Ecole : #{student.ecole}
           p(class="card-text") Classe : #{student.classe}
-          p(class="card-text") Souhait : #{student.option}
+          p(class="card-text mt-3") Souhait :
+          each option in student.options 
+            if option.other  
+              p(class="ml-5") #{option.other}
+            else
+              p(class="ml-5") #{option.orientation} : #{option.country}
+      div(class="main-bg" style="overflow:auto")
+        div(class="main-bg" style="float:right")
+          button(type="button" class="btn btn-danger" id="removeStudent" onclick="removeStudent()") Supprimer
+
+  script.
+    function removeStudent() {
+      var XHR = new XMLHttpRequest();
+      
+     const student_id = document.querySelector("#student_id").textContent;
+    
+      // Définissez ce qui se passe en cas de succès de soumission de données
+      XHR.addEventListener('load', function(event) {
+        location.href = "/students";
+      });
+
+      // Définissez ce qui arrive en cas d'erreur
+      XHR.addEventListener('error', function(event) {
+        alert('Oups! Quelque chose s\'est mal passé.');
+      });
+
+      // Configurez la requête
+      XHR.open('DELETE', "/students/remove");
+
+      // Ajoutez l'en-tête HTTP requise pour requêtes POST de données de formulaire
+      XHR.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+
+      // Finalement, envoyez les données.
+      XHR.send(JSON.stringify({
+          id: student_id,
+        }));
+    }
+  
