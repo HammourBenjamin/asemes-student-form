@@ -1,0 +1,9 @@
+const { app } = require("../app");
+const env = require("../env")[process.env.NODE_ENV];
+
+const server = require('http').Server(app).listen(env.portHTTP);
+
+module.exports = {
+  server,
+};
+  
