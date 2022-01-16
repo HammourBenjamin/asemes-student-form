@@ -527,6 +527,8 @@ block content
     }
 
     function displaySuccess() {
+      const errorsContentElement = document.querySelector("#errorsContent");
+      errorsContentElement.innerHTML = '';
       const successContentElement = document.querySelector("#successContent");
       successContentElement.style.display = "block";
       const formContainerElement = document.querySelector("#form_container");
