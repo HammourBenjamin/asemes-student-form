@@ -2,16 +2,14 @@ extends ../layout
 
 block content
   div(class="d-flex flex-row content justify-content-center mx-auto")
-      div(id="errorsContent", class="card w-50 mt-4")
-        if errors
-          each error in errors 
-            div(class="alert alert-danger" role="alert") #{error}
+    div(id="errorsContent", class="card w-50 mt-4")
   div(class="d-flex flex-row content justify-content-center mx-auto")
-      div(id="errorsContent", class="card w-50 mt-4")
-        if success
-          div(class="alert alert-success" role="alert") Votre demande a été prise en compte.
+      div(id="successContent", class="card w-50 hidden") 
+        div(class="alert alert-success p-4 m-0") 
+          p(class="center") ASEMES vous remercie pour votre intéret
+          p(class="center") Votre demande a bien été prise en compte
   div(class="d-flex flex-row content justify-content-center mx-auto")
-    form(class="card w-50 mt-5 mb-5" id="regForm")
+    form(class="card w-50 mt-5 mb-5" id="form_container")
       div(class="card-header tab") Coordonnées :
         div(class="card-body")
           div(class="form-group")
@@ -26,7 +24,7 @@ block content
             input(class="form-control mail_input" type="email" name="email" value = body === undefined ? `` : `${body.email}`)
           div(class="form-group")
             label(style="display:block") Téléphone
-            input(class="form-control" oninput="this.className = ''" type="tel" name="tel" id="phone" value = body === undefined ? `` : `${body.tel}`)
+            input(class="form-control" type="tel" name="tel" id="phone" value = body === undefined ? `` : `${body.tel}`)
       div(class="card-header tab") Scolarité :
         div(class="card-body")
           div(class="form-group")
@@ -73,6 +71,7 @@ block content
   script.
     var currentTab = 0;
     var wish_index = 1;
+    let errors = [];
 
     showTab(currentTab); // Display the current tab
     addWhish(wish_index);
@@ -301,8 +300,9 @@ block content
     }
   
     function sendData() {
+
       var XHR = new XMLHttpRequest();
-     
+
       const whishes = [];
       const full_phone = iti.getNumber();
       const name = document.getElementsByClassName("name_input")[0].value;
@@ -342,37 +342,197 @@ block content
           other : other_input_element[i].value
         });
       }
-    
-      // Définissez ce qui se passe en cas de succès de soumission de données
-      XHR.addEventListener('load', function(event) {
-        location.href = "/students/signup/form";
-      });
 
-      // Définissez ce qui arrive en cas d'erreur
-      XHR.addEventListener('error', function(event) {
-        alert('Oups! Quelque chose s\'est mal passé.');
-      });
+      for (let whish of whishes) {
+        if ( !whish.orientation
+            && !whish.country
+            && !whish.other) {
+              whish.other = 'En réflexion'
+          }
+      }
 
-      // Configurez la requête
-      XHR.open('POST', "/students/signup");
+      if(formValidation(classe, pays, whishes)) {
 
-      // Ajoutez l'en-tête HTTP requise pour requêtes POST de données de formulaire
-      XHR.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+        // Définissez ce qui se passe en cas de succès de soumission de données
+        XHR.addEventListener('load', function(event) {
+          displaySuccess();
+          setTimeout(() => {
+            location.href = "/students/signup/form"}
+            , 3000);
+        });
 
-      // Finalement, envoyez les données.
-      XHR.send(JSON.stringify({
-        nom : name,
-        prenom : surname,
-        email : email,
-        full_phone : full_phone,
-        scolarite : system_scolaire,
-        pays : pays,
-        ville : ville,
-        ecole : ecole,
-        classe : classe,
-        options : whishes,
-        }));
+        // Définissez ce qui arrive en cas d'erreur
+        XHR.addEventListener('error', function(event) {
+          alert('Oups! Quelque chose s\'est mal passé.');
+        });
+
+        // Configurez la requête
+        XHR.open('POST', "/students/signup");
+
+        // Ajoutez l'en-tête HTTP requise pour requêtes POST de données de formulaire
+        XHR.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+
+        // Finalement, envoyez les données.
+        XHR.send(JSON.stringify({
+          nom : name,
+          prenom : surname,
+          email : email,
+          full_phone : full_phone,
+          scolarite : system_scolaire,
+          pays : pays,
+          ville : ville,
+          ecole : ecole,
+          classe : classe,
+          options : whishes,
+          }));
+      } else {
+        displayErrors();
+        //currentTab = 0;
+        //showTab(currentTab)
+        errors = [];
+      }
     }
+
+    function nameValidation() {
+      if (document.querySelector(".name_input").value) {
+        return true;
+      } else {
+        errors.push({
+          error : "Vous devez renseigner votre nom",
+        })
+        return false;
+      }
+    }
+
+    function surnameValidation() {
+      if (document.querySelector(".surname_input").value) {
+        return true;
+      } else {
+        errors.push({
+          error : "Vous devez renseigner votre prenom",
+        })
+        return false;
+      }
+    }
+
+    function mailValidation() {
+      let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      if (document.querySelector(".mail_input").value.match(mailformat)) {
+        return true;
+      } else {
+        errors.push({
+          error : "Vous devez renseigner une adresse e-mail valide",
+        })
+        return false;
+      }
+    }
+
+    function phoneValidation() {
+      if(iti.isValidNumber()) {
+         return true;
+      } else {
+        console.log(iti.getValidationError())
+        errors.push({
+          error : "Vous devez renseigner un numéro de téléphone valide",
+        })
+        return false;
+      }
+    }
+
+    function villeValidation() {
+      if (document.querySelector("#ville").value) {
+        return true;
+      } else {
+        errors.push({
+          error : "Vous devez renseigner la ville de votre établissement scolaire",
+        })
+        return false;
+      }
+    }
+
+    function ecoleValidation() {
+      if (document.querySelector("#ecole").value) {
+        return true;
+      } else {
+        errors.push({
+          error : "Vous devez renseigner le nom de votre établissement scolaire",
+        })
+        return false;
+      }
+    }
+
+    function classeValidation(classe) {
+      if (classe) {
+        return true;
+      } else {
+        errors.push({
+          error : "Vous devez renseigner votre classe",
+        })
+        return false;
+      }
+    }
+
+    function paysValidation(pays) {
+      if (pays) {
+        return true;
+      } else {
+        errors.push({
+          error : "Vous devez renseigner votre pays de scolarisation",
+        })
+        return false;
+      }
+    }
+
+    function whishesValidation(whishes) {
+      for (let whish of whishes) {
+        if ( whish.orientation
+            && whish.country
+            && whish.other) {
+              errors.push({
+              error : "Un de vos voeux n'est pas valide",
+              })
+            return false;
+          }
+      }
+      return true;
+    }
+
+    function formValidation(classe, pays, whishes) {
+      nameValidation();
+      surnameValidation();
+      mailValidation();
+      phoneValidation();
+      paysValidation(pays);1
+      villeValidation();
+      ecoleValidation();
+      classeValidation(classe);
+      whishesValidation(whishes)
+      return !(errors.length > 1);
+    }
+
+    function displayErrors() {
+      const errorsContentElement = document.querySelector("#errorsContent");
+      errorsContentElement.innerHTML = '';
+      for ( let error of errors) {
+        let errorElement = document.createElement("div");
+        errorElement.classList.add("alert", "alert-danger");
+        errorElement.innerText = error.error;
+        errorsContentElement.append(errorElement);
+      }
+    }
+
+    function hideSuccess() {
+      const successContentElement = document.querySelector("#successContent");
+      successContentElement.style.display = "none";
+    }
+
+    function displaySuccess() {
+      const successContentElement = document.querySelector("#successContent");
+      successContentElement.style.display = "block";
+      const formContainerElement = document.querySelector("#form_container");
+      formContainerElement.style.display = "none";
+    }
+
   
   script.
     var input = document.querySelector("#phone");

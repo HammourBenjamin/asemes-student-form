@@ -6,7 +6,6 @@ block content
       div(class="card mt-3")
         h5(class="card-header") #{student.nom} #{student.prenom} demande faite le #{student.date}
         div(class="card-body")
-          p(class="hidden" id="student_id") #{student._id}
           p(class="card-text") E-Mail : #{student.email}
           p(class="card-text mb-3") Téléphone : #{student.tel}
           p(class="card-text") Système scolaire : #{student.scolarite}
@@ -22,13 +21,13 @@ block content
               p(class="ml-5") #{option.orientation} : #{option.country}
       div(class="main-bg" style="overflow:auto")
         div(class="main-bg" style="float:right")
-          button(type="button" class="btn btn-danger" id="removeStudent" onclick="removeStudent()") Supprimer
+          button(type="button" class="btn btn-danger" data-id=student._id onclick="removeStudent()") Supprimer
 
   script.
     function removeStudent() {
       var XHR = new XMLHttpRequest();
       
-     const student_id = document.querySelector("#student_id").textContent;
+      const student_id = event.target.dataset.id;
     
       // Définissez ce qui se passe en cas de succès de soumission de données
       XHR.addEventListener('load', function(event) {
